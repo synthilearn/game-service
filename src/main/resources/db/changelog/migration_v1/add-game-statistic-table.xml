@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd">
+
+    <changeSet id="create-game-statistic-table" author="nporshennikov">
+        <createTable tableName="game_statistic">
+            <column name="id" type="UUID">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="translates_in_game" type="varchar">
+                <constraints nullable="false"/>
+            </column>
+            <column name="correct_translates" type="int"/>
+            <column name="incorrect_translates" type="int"/>
+            <column name="translates_lack_time" type="int"/>
+            <column name="game_current_time" type="int"/>
+            <column name="game_full_time" type="int"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="game-statistic-foreign-key" author="nporshennikov">
+        <addForeignKeyConstraint
+                baseTableName="game_statistic"
+                baseColumnNames="id"
+                constraintName="fk_game_id_game_statistic_id"
+                referencedTableName="game"
+                referencedColumnNames="id"
+                onDelete="CASCADE"
+                onUpdate="CASCADE"/>
+    </changeSet>
+
+</databaseChangeLog>

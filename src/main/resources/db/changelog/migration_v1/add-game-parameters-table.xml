@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd">
+
+    <changeSet id="create-game-parameters-table" author="nporshennikov">
+        <createTable tableName="game_parameters">
+            <column name="id" type="UUID">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="translates_amount" type="int">
+                <constraints nullable="false"/>
+            </column>
+            <column name="available_part_of_speech" type="varchar(1024)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="phrase_types" type="varchar(1024)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="date_from" type="date"/>
+            <column name="date_to" type="date"/>
+            <column name="time_on_word" type="int">
+                <constraints nullable="false"/>
+            </column>
+            <column name="type_of_game" type="varchar(1024)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="game-parameters-foreign-key" author="nporshennikov">
+        <addForeignKeyConstraint
+                baseTableName="game_parameters"
+                baseColumnNames="id"
+                constraintName="fk_game_id_game_parameters_game_id"
+                referencedTableName="game"
+                referencedColumnNames="id"
+                onDelete="CASCADE"
+                onUpdate="CASCADE"/>
+    </changeSet>
+
+</databaseChangeLog>

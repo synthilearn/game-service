@@ -6,8 +6,8 @@
         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd">
 
     <include file="add-game-table.xml" relativeToChangelogFile="true"/>
-    <include file="add-translate-progress-table.xml" relativeToChangelogFile="true"/>
     <include file="add-game-statistic-table.xml" relativeToChangelogFile="true"/>
     <include file="add-game-parameters-table.xml" relativeToChangelogFile="true"/>
+    <include file="add-translate-in-game-table.xml" relativeToChangelogFile="true"/>
 
 </databaseChangeLog>

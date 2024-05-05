@@ -2,6 +2,7 @@ package com.synthilearn.gameservice.infra.persistence.jpa.entity;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 import org.springframework.data.annotation.Id;
@@ -12,6 +13,7 @@ import org.springframework.data.relational.core.mapping.Table;
 
 import com.synthilearn.gameservice.domain.PartOfSpeech;
 import com.synthilearn.gameservice.domain.PhraseType;
+import com.synthilearn.gameservice.domain.TypeOfGame;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -19,7 +21,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Table("game_parameters")
-@Builder
+@Builder(toBuilder = true)
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
@@ -29,9 +31,9 @@ public class GameParametersEntity implements Persistable<UUID> {
     @Column("translates_amount")
     private Integer translatesAmount;
     @Column("available_part_of_speech")
-    private List<PartOfSpeech> availablePartOfSpeech;
+    private String availablePartOfSpeech;
     @Column("phrase_types")
-    private List<PhraseType> phraseTypes;
+    private String phraseTypes;
     @Column("date_from")
     private LocalDate dateFrom;
     @Column("date_to")
@@ -39,7 +41,7 @@ public class GameParametersEntity implements Persistable<UUID> {
     @Column("time_on_word")
     private Integer timeOnWord;
     @Column("type_of_game")
-    private String typeOfGame;
+    private TypeOfGame typeOfGame;
 
     @Transient
     private boolean newRecord;

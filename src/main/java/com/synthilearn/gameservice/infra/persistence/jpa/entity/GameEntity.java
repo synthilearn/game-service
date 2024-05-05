@@ -1,6 +1,8 @@
 package com.synthilearn.gameservice.infra.persistence.jpa.entity;
 
 import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
+import java.util.List;
 import java.util.UUID;
 
 import org.springframework.data.annotation.Id;
@@ -18,7 +20,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Table("game")
-@Builder
+@Builder(toBuilder = true)
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
@@ -29,7 +31,13 @@ public class GameEntity implements Persistable<UUID> {
     @Column("workarea_id")
     private UUID workareaId;
     @Column("creation_date")
-    private LocalDateTime creationDate;
+    private ZonedDateTime creationDate;
+    @Column("phrases_in_game")
+    private List<String> phrasesInGame;
+    @Column("statistic_created")
+    private Boolean statisticCreated;
+    @Column("time_on_word")
+    private Integer timeOnWord;
     private GameResult result;
     private GameStatus status;
 

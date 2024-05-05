@@ -13,11 +13,18 @@
             <column name="workarea_id" type="UUID">
                 <constraints nullable="false"/>
             </column>
-            <column name="creation_date" type="timestamp">
+            <column name="creation_date" type="timestamptz">
                 <constraints nullable="false"/>
             </column>
+            <column name="phrases_in_game" type="varchar"/>
             <column name="result" type="VARCHAR(1024)"/>
             <column name="status" type="VARCHAR(1024)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="time_on_word" type="int">
+                <constraints nullable="false"/>
+            </column>
+            <column name="statistic_created" type="boolean">
                 <constraints nullable="false"/>
             </column>
         </createTable>

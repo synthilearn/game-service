@@ -30,15 +30,15 @@
         </createTable>
     </changeSet>
 
-    <changeSet id="game-parameters-foreign-key" author="nporshennikov">
-        <addForeignKeyConstraint
-                baseTableName="game_parameters"
-                baseColumnNames="id"
-                constraintName="fk_game_id_game_parameters_game_id"
-                referencedTableName="game"
-                referencedColumnNames="id"
-                onDelete="CASCADE"
-                onUpdate="CASCADE"/>
-    </changeSet>
+<!--    <changeSet id="game-parameters-foreign-key" author="nporshennikov">-->
+<!--        <addForeignKeyConstraint-->
+<!--                baseTableName="game_parameters"-->
+<!--                baseColumnNames="id"-->
+<!--                constraintName="fk_game_id_game_parameters_game_id"-->
+<!--                referencedTableName="game"-->
+<!--                referencedColumnNames="id"-->
+<!--                onDelete="CASCADE"-->
+<!--                onUpdate="CASCADE"/>-->
+<!--    </changeSet>-->
 
 </databaseChangeLog>

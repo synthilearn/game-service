@@ -18,7 +18,6 @@ public interface GameJpaRepository extends ReactiveCrudRepository<GameEntity, UU
     @Query("""
             SELECT g.* FROM game g
             WHERE g.workarea_id = :workareaId
-            AND g.status = 'IN_PROGRESS'
             ORDER BY g.creation_date DESC
             LIMIT 1
     """)

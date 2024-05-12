@@ -13,6 +13,7 @@ import com.synthilearn.gameservice.infra.adapter.dto.AllPhraseRequestDto;
 import com.synthilearn.gameservice.infra.persistence.jpa.entity.GameParametersEntity;
 import com.synthilearn.gameservice.infra.persistence.jpa.repository.GameJpaRepository;
 import com.synthilearn.gameservice.infra.persistence.jpa.repository.GameParametersJpaRepository;
+import com.synthilearn.gameservice.infra.rest.exception.GameParametersException;
 
 import lombok.RequiredArgsConstructor;
 import reactor.core.publisher.Mono;
@@ -44,10 +45,10 @@ public class GameParametersServiceImpl implements GameParametersService {
     public Mono<GameParameters> getGameParameters(UUID workareaId) {
         return gameJpaRepository.findTopByOrderByCreationDateDesc(workareaId)
                 .singleOptional()
-                .flatMap(game -> game.map(
-                                entity -> gameParametersJpaRepository.findById(entity.getId()))
-                        .orElseGet(Mono::empty))
-                .map(domainMapper::map);
+                .flatMap(gameOpt -> gameOpt.map(
+                                game -> gameParametersJpaRepository.findById(game.getId())
+                                        .map(domainMapper::map))
+                        .orElseGet(() -> Mono.error(GameParametersException.notFound(workareaId))));
     }
 
     private GameParametersEntity init(AllPhraseRequestDto requestDto, UUID gameId) {

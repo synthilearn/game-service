@@ -1,13 +1,11 @@
 package com.synthilearn.gameservice.app.service.impl;
 
-import java.awt.print.Pageable;
 import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,7 +21,6 @@ import com.synthilearn.gameservice.infra.adapter.dto.AllPhraseRequestDto;
 import com.synthilearn.gameservice.infra.persistence.jpa.entity.GameEntity;
 import com.synthilearn.gameservice.infra.persistence.jpa.entity.TranslateInGameEntity;
 import com.synthilearn.gameservice.infra.persistence.jpa.repository.GameJpaRepository;
-import com.synthilearn.gameservice.infra.persistence.jpa.repository.GameParametersJpaRepository;
 import com.synthilearn.gameservice.infra.persistence.jpa.repository.TranslateInGameJpaRepository;
 import com.synthilearn.gameservice.infra.rest.dto.AllGamesResultDto;
 import com.synthilearn.gameservice.infra.rest.dto.AnswerRequestDto;

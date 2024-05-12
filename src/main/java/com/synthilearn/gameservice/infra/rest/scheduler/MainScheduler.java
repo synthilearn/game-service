@@ -58,7 +58,7 @@ public class MainScheduler {
 
     @Transactional
     @Scheduled(fixedRateString = "PT10S")
-    public Mono<Void> startGame() {
+    public Mono<Void> generateStatistics() {
         log.info("Запуск джобы по формированию статистики");
         return gameJpaRepository.getWaitingStatisticGenerateGames()
                 .flatMap(game -> translateInGameJpaRepository.findAllByGameId(game.getId())
@@ -84,7 +84,7 @@ public class MainScheduler {
                                 gameStatisticJpaRepository.save(GameStatisticEntity.builder()
                                         .id(game.getId())
                                         .newRecord(true)
-                                        .answerInfo(new ObjectMapper().writeValueAsString(stringPhraseInfoMap.toString()))
+                                        .answerInfo(new ObjectMapper().writeValueAsString(stringPhraseInfoMap))
                                         .correctTranslates(correctTranslates)
                                         .incorrectTranslates(incorrectTranslates)
                                         .translatesInGame(translatesInGame)

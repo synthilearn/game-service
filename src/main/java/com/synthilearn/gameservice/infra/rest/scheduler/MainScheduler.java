@@ -4,6 +4,7 @@ import java.time.ZonedDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
@@ -18,13 +19,16 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.synthilearn.gameservice.domain.GameResult;
 import com.synthilearn.gameservice.domain.GameStatus;
+import com.synthilearn.gameservice.infra.adapter.DictionaryClient;
 import com.synthilearn.gameservice.infra.persistence.jpa.entity.GameEntity;
 import com.synthilearn.gameservice.infra.persistence.jpa.entity.GameStatisticEntity;
 import com.synthilearn.gameservice.infra.persistence.jpa.entity.TranslateInGameEntity;
 import com.synthilearn.gameservice.infra.persistence.jpa.repository.GameJpaRepository;
 import com.synthilearn.gameservice.infra.persistence.jpa.repository.GameStatisticJpaRepository;
 import com.synthilearn.gameservice.infra.persistence.jpa.repository.TranslateInGameJpaRepository;
+import com.synthilearn.gameservice.infra.rest.dto.ChangeProgressRequest;
 import com.synthilearn.gameservice.infra.rest.dto.PhraseInfo;
+import com.synthilearn.gameservice.infra.rest.dto.ProgressEntry;
 
 import lombok.RequiredArgsConstructor;
 import reactor.core.publisher.Mono;
@@ -37,6 +41,7 @@ public class MainScheduler {
     private final GameJpaRepository gameJpaRepository;
     private final TranslateInGameJpaRepository translateInGameJpaRepository;
     private final GameStatisticJpaRepository gameStatisticJpaRepository;
+    private final DictionaryClient dictionaryClient;
 
     @Transactional
     @Scheduled(fixedRateString = "PT2S")
@@ -80,11 +85,22 @@ public class MainScheduler {
                             Map<String, PhraseInfo> stringPhraseInfoMap =
                                     generatePhrases(translations, game);
 
+                            ChangeProgressRequest request = new ChangeProgressRequest();
+                            stringPhraseInfoMap.forEach((key, value) -> request.getProgressEntries()
+                                    .add(new ProgressEntry(value.getCorrectAnswerId(),
+                                            value.getNewProgress())));
+
+                            if (!request.getProgressEntries().isEmpty()) {
+                                dictionaryClient.changeProgress(request)
+                                        .subscribe();
+                            }
+
                             try {
                                 gameStatisticJpaRepository.save(GameStatisticEntity.builder()
                                         .id(game.getId())
                                         .newRecord(true)
-                                        .answerInfo(new ObjectMapper().writeValueAsString(stringPhraseInfoMap))
+                                        .answerInfo(new ObjectMapper().writeValueAsString(
+                                                stringPhraseInfoMap))
                                         .correctTranslates(correctTranslates)
                                         .incorrectTranslates(incorrectTranslates)
                                         .translatesInGame(translatesInGame)
@@ -92,7 +108,7 @@ public class MainScheduler {
                                                 correctTranslates)
                                         .build()).subscribe();
                             } catch (JsonProcessingException e) {
-
+                                return Mono.error(new RuntimeException(e));
                             }
                             return gameJpaRepository.save(game.toBuilder()
                                     .status(GameStatus.FINISHED)
@@ -127,10 +143,17 @@ public class MainScheduler {
             answeredTranslate.ifPresent(translate -> phrasesInfoMap.put(phrase,
                     new PhraseInfo(translate.getTranslateText(), translate.getCorrect(),
                             trueAnswer.getId(), translate.getOldProgress(),
-                            translate.getNewProgress())));
+                            calculateProgress(translate, trueAnswer))));
         }
 
         return phrasesInfoMap;
+    }
+
+    private Integer calculateProgress(TranslateInGameEntity entity,
+                                      TranslateInGameEntity trueAnswer) {
+        return Objects.equals(trueAnswer.getId(), entity.getId()) ?
+                Math.min(trueAnswer.getOldProgress() + 3, 100) :
+                Math.max(trueAnswer.getOldProgress() - 3, 0);
     }
 
     private Boolean gameIsFinished(GameEntity game, List<TranslateInGameEntity> translates) {

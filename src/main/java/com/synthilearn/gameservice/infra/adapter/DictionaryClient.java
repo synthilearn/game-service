@@ -1,9 +1,7 @@
 package com.synthilearn.gameservice.infra.adapter;
 
-import java.util.LinkedHashMap;
 import java.util.List;
 
-import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -17,9 +15,9 @@ import com.synthilearn.commonstarter.GenericResponse;
 import com.synthilearn.gameservice.app.config.properties.WebClientProperties;
 import com.synthilearn.gameservice.domain.Phrase;
 import com.synthilearn.gameservice.infra.adapter.dto.AllPhraseRequestDto;
+import com.synthilearn.gameservice.infra.rest.dto.ChangeProgressRequest;
 
 import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import reactor.core.publisher.Mono;
 
@@ -55,6 +53,23 @@ public class DictionaryClient {
                 .onErrorResume(error -> {
                     log.error("Error has occurred while save data for customer: {}, exception: {}",
                             requestDto, error);
+                    GenericResponse<?> response =
+                            ((WebClientResponseException) error).getResponseBodyAs(
+                                    GenericResponse.class);
+                    throw new RuntimeException(response.getMessage());
+                });
+    }
+
+    public Mono<Void> changeProgress(ChangeProgressRequest request) {
+        return webClient.post()
+                .uri(webClientProperties.getDictionaryHost() + "/phrase/change-progress")
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(Mono.just(request), ChangeProgressRequest.class)
+                .retrieve()
+                .bodyToMono(Void.class)
+                .onErrorResume(error -> {
+                    log.error("Error has occurred while save data for customer: {}, exception: {}",
+                            request, error);
                     GenericResponse<?> response =
                             ((WebClientResponseException) error).getResponseBodyAs(
                                     GenericResponse.class);

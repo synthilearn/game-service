@@ -46,7 +46,8 @@ public class DictionaryClient {
                         List<Phrase> response = objectMapper.readValue(phrases.toString(),
                                 new TypeReference<>() {
                                 });
-                        return response;
+                        return response.stream().peek(phrase -> phrase.setText(
+                                phrase.getText().replaceAll("[\"\\\\]", ""))).toList();
                     } catch (JsonProcessingException e) {
                         throw new RuntimeException(e);
                     }

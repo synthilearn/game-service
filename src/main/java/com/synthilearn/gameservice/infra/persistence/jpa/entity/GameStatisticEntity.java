@@ -24,17 +24,13 @@ public class GameStatisticEntity implements Persistable<UUID> {
     @Id
     private UUID id;
     @Column("translates_in_game")
-    private List<UUID> translatesInGame;
+    private Integer translatesInGame;
     @Column("correct_translates")
     private Integer correctTranslates;
     @Column("incorrect_translates")
     private Integer incorrectTranslates;
     @Column("translates_lack_time")
     private Integer translatesLackTime;
-    @Column("game_current_time")
-    private Integer gameCurrentTime;
-    @Column("game_full_time")
-    private Integer gameFullTime;
 
     @Transient
     private boolean newRecord;

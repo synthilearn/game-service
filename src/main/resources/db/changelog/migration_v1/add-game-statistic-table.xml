@@ -10,14 +10,12 @@
             <column name="id" type="UUID">
                 <constraints primaryKey="true"/>
             </column>
-            <column name="translates_in_game" type="varchar">
+            <column name="translates_in_game" type="int">
                 <constraints nullable="false"/>
             </column>
             <column name="correct_translates" type="int"/>
             <column name="incorrect_translates" type="int"/>
             <column name="translates_lack_time" type="int"/>
-            <column name="game_current_time" type="int"/>
-            <column name="game_full_time" type="int"/>
         </createTable>
     </changeSet>
 

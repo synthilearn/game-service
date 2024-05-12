@@ -3,6 +3,7 @@ package com.synthilearn.gameservice.infra.rest.dto;
 import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
 import java.util.List;
+import java.util.UUID;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -19,16 +20,16 @@ public class CurrentGameResponseDto {
     private ZonedDateTime stageEndTime;
     private ZonedDateTime gameStartedTime;
     private List<String> answerOptions;
-    private Boolean isStarted;
+    private GameStateDto state;
+    private UUID gameId;
 
-    public CurrentGameResponseDto(Boolean isFinished) {
-        this.isFinished = isFinished;
+
+    public CurrentGameResponseDto(GameStateDto state) {
+        this.state = state;
     }
 
-    private Boolean isFinished;
-
-    public CurrentGameResponseDto(ZonedDateTime gameStartedTime, Boolean isStarted) {
+    public CurrentGameResponseDto(ZonedDateTime gameStartedTime, GameStateDto state) {
         this.gameStartedTime = gameStartedTime;
-        this.isStarted = isStarted;
+        this.state = state;
     }
 }

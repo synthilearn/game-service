@@ -2,6 +2,8 @@ package com.synthilearn.gameservice.infra.rest;
 
 import java.util.UUID;
 
+import jakarta.validation.Valid;
+
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -13,6 +15,8 @@ import com.synthilearn.commonstarter.GenericResponse;
 import com.synthilearn.gameservice.app.service.GameService;
 import com.synthilearn.gameservice.domain.Game;
 import com.synthilearn.gameservice.infra.adapter.dto.AllPhraseRequestDto;
+import com.synthilearn.gameservice.infra.rest.dto.AnswerResponseDto;
+import com.synthilearn.gameservice.infra.rest.dto.AnswerRequestDto;
 import com.synthilearn.gameservice.infra.rest.dto.CurrentGameResponseDto;
 
 import lombok.RequiredArgsConstructor;
@@ -36,6 +40,13 @@ public class GameController {
     public Mono<GenericResponse<CurrentGameResponseDto>> getCurrentGame(
             @RequestParam("workarea_id") UUID workareaId) {
         return gameService.getCurrentGame(workareaId)
+                .map(GenericResponse::ok);
+    }
+
+    @PostMapping("/answer")
+    public Mono<GenericResponse<AnswerResponseDto>> answer(
+            @Valid @RequestBody AnswerRequestDto request) {
+        return gameService.answerQuestion(request)
                 .map(GenericResponse::ok);
     }
 }

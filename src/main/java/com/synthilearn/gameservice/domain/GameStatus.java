@@ -1,5 +1,5 @@
 package com.synthilearn.gameservice.domain;
 
 public enum GameStatus {
-    FINISHED, IN_PROGRESS
+    FINISHED, IN_PROGRESS, GENERATE_STATISTIC
 }

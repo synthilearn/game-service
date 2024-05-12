@@ -1,5 +1,6 @@
 package com.synthilearn.gameservice.infra.persistence.jpa.entity;
 
+import java.time.ZonedDateTime;
 import java.util.UUID;
 
 import org.springframework.data.annotation.Id;
@@ -39,6 +40,8 @@ public class TranslateInGameEntity implements Persistable<UUID> {
     private Integer question;
     private Boolean correct;
     private Boolean answer;
+    @Column("answer_time")
+    private ZonedDateTime answerTime;
 
     @Transient
     private boolean newRecord;

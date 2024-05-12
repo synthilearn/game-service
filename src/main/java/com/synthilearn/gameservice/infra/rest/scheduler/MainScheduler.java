@@ -152,7 +152,7 @@ public class MainScheduler {
 
     private Integer calculateProgress(TranslateInGameEntity entity,
                                       TranslateInGameEntity trueAnswer) {
-        return Objects.equals(trueAnswer.getId(), entity.getId()) ?
+        return Objects.equals(trueAnswer.getTranslateId(), entity.getTranslateId()) ?
                 Math.min(trueAnswer.getOldProgress() + 3, 100) :
                 Math.max(trueAnswer.getOldProgress() - 3, 0);
     }

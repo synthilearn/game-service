@@ -31,4 +31,10 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(ex.getStatus())
                 .body(Mono.just(GenericResponse.error(ex.getCode(), ex.getMessage())));
     }
+
+    @ExceptionHandler(GameParametersException.class)
+    public ResponseEntity<Mono<GenericResponse<?>>> handleGameParametersException(GameParametersException ex) {
+        return ResponseEntity.status(ex.getStatus())
+                .body(Mono.just(GenericResponse.error(ex.getCode(), ex.getMessage())));
+    }
 }

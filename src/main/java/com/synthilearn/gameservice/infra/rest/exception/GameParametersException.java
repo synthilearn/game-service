@@ -12,6 +12,6 @@ public class GameParametersException extends GenericException {
     public static GameParametersException notFound(UUID workareaId) {
         return new GameParametersException(
                 String.format("Game parameters not found for workarea: %s", workareaId),
-                HttpStatus.BAD_REQUEST, 1000);
+                HttpStatus.OK, 1000);
     }
 }

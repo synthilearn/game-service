@@ -179,6 +179,12 @@ public class GameServiceImpl implements GameService {
                         (int) Math.ceil((double) el.getT2() / request.getSize())));
     }
 
+    @Override
+    public Mono<Game> getOne(UUID id) {
+        return gameJpaRepository.findById(id)
+                .map(domainMapper::map);
+    }
+
     private Mono<AnswerResponseDto> formResponse(TranslateInGame newTranslateInGame, UUID gameId) {
         return translateInGameJpaRepository.findByGameIdAndQuestionAndCorrect(
                 gameId, newTranslateInGame.getQuestion(),

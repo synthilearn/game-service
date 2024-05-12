@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.UUID;
 
 import com.synthilearn.gameservice.domain.Game;
+import com.synthilearn.gameservice.domain.mapper.DomainMapper;
 import com.synthilearn.gameservice.infra.adapter.dto.AllPhraseRequestDto;
 import com.synthilearn.gameservice.infra.rest.dto.AllGamesResultDto;
 import com.synthilearn.gameservice.infra.rest.dto.AnswerResponseDto;
@@ -22,4 +23,6 @@ public interface GameService {
     Mono<AnswerResponseDto> answerQuestion(AnswerRequestDto request);
 
     Mono<AllGamesResultDto> getAll(GetAllGamesRequest request);
+
+    Mono<Game> getOne(UUID id);
 }

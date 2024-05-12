@@ -6,6 +6,7 @@ import java.util.UUID;
 import jakarta.validation.Valid;
 
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -21,6 +22,7 @@ import com.synthilearn.gameservice.infra.rest.dto.AnswerResponseDto;
 import com.synthilearn.gameservice.infra.rest.dto.AnswerRequestDto;
 import com.synthilearn.gameservice.infra.rest.dto.CurrentGameResponseDto;
 import com.synthilearn.gameservice.infra.rest.dto.GetAllGamesRequest;
+import com.synthilearn.gameservice.infra.rest.exception.GameException;
 
 import lombok.RequiredArgsConstructor;
 import reactor.core.publisher.Mono;
@@ -57,6 +59,13 @@ public class GameController {
     public Mono<GenericResponse<AllGamesResultDto>> getAll(
             @Valid @RequestBody GetAllGamesRequest request) {
         return gameService.getAll(request)
+                .map(GenericResponse::ok);
+    }
+
+    @GetMapping("/{id}")
+    public Mono<GenericResponse<Game>> getOneGame(@PathVariable("id") UUID id) {
+        return gameService.getOne(id)
+                .switchIfEmpty(Mono.error(GameException.notFound(id)))
                 .map(GenericResponse::ok);
     }
 }

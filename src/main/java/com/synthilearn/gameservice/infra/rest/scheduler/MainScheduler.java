@@ -56,6 +56,10 @@ public class MainScheduler {
                 .flatMap(game -> translateInGameJpaRepository.findAllByGameId(game.getId())
                         .collectList()
                         .flatMap(translations -> {
+                            List<TranslateInGameEntity> translateInGameEntities =
+                                    translations.stream()
+                                            .filter(TranslateInGameEntity::getCorrect)
+                                            .toList();
                             Integer translatesInGame =
                                     (int) translations.stream()
                                             .filter(TranslateInGameEntity::getCorrect)
@@ -68,6 +72,11 @@ public class MainScheduler {
                                     .filter(x -> Boolean.TRUE.equals(x.getAnswer()))
                                     .filter(translate -> !translate.getCorrect())
                                     .count();
+                            List<String> phrases = game.getPhrasesInGame()
+                                    .stream()
+                                    .map(x -> x.replaceAll("[\"\\\\{}]", ""))
+                                    .toList();
+
                             gameStatisticJpaRepository.save(GameStatisticEntity.builder()
                                     .id(game.getId())
                                     .newRecord(true)

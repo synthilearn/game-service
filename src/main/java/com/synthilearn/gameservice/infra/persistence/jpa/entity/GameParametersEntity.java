@@ -31,7 +31,7 @@ public class GameParametersEntity implements Persistable<UUID> {
     @Column("translates_amount")
     private Integer translatesAmount;
     @Column("available_part_of_speech")
-    private String availablePartOfSpeech;
+    private String partOfSpeech;
     @Column("phrase_types")
     private String phraseTypes;
     @Column("date_from")

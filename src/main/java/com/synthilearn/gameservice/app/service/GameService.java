@@ -10,6 +10,7 @@ import com.synthilearn.gameservice.infra.rest.dto.AllGamesResultDto;
 import com.synthilearn.gameservice.infra.rest.dto.AnswerResponseDto;
 import com.synthilearn.gameservice.infra.rest.dto.AnswerRequestDto;
 import com.synthilearn.gameservice.infra.rest.dto.CurrentGameResponseDto;
+import com.synthilearn.gameservice.infra.rest.dto.GameResponseDto;
 import com.synthilearn.gameservice.infra.rest.dto.GetAllGamesRequest;
 
 import reactor.core.publisher.Mono;
@@ -24,5 +25,5 @@ public interface GameService {
 
     Mono<AllGamesResultDto> getAll(GetAllGamesRequest request);
 
-    Mono<Game> getOne(UUID id);
+    Mono<GameResponseDto> getOne(UUID id);
 }

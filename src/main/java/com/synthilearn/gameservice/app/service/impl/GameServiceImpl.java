@@ -30,6 +30,7 @@ import com.synthilearn.gameservice.infra.rest.dto.AnswerRequestDto;
 import com.synthilearn.gameservice.infra.rest.dto.AnswerResponseDto;
 import com.synthilearn.gameservice.infra.rest.dto.CurrentGameResponseDto;
 import com.synthilearn.gameservice.infra.rest.dto.CurrentStageInfo;
+import com.synthilearn.gameservice.infra.rest.dto.GameResponseDto;
 import com.synthilearn.gameservice.infra.rest.dto.GameStateDto;
 import com.synthilearn.gameservice.infra.rest.dto.GetAllGamesRequest;
 import com.synthilearn.gameservice.infra.rest.exception.GameException;
@@ -49,7 +50,6 @@ public class GameServiceImpl implements GameService {
     private final TranslateInGameJpaRepository translateInGameJpaRepository;
     private final GameParametersService gameParametersService;
     private final DomainMapper domainMapper;
-    private final GameParametersJpaRepository gameParametersJpaRepository;
 
     @Override
     @Transactional
@@ -180,9 +180,15 @@ public class GameServiceImpl implements GameService {
     }
 
     @Override
-    public Mono<Game> getOne(UUID id) {
+    public Mono<GameResponseDto> getOne(UUID id) {
         return gameJpaRepository.findById(id)
-                .map(domainMapper::map);
+                .map(domainMapper::mapToDto)
+                .map(game -> {
+                    game.setPhrasesInGame(game.getPhrasesInGame().stream()
+                            .map(el -> el.replaceAll("[\"\\\\{}]", ""))
+                            .toList());
+                    return game;
+                });
     }
 
     private Mono<AnswerResponseDto> formResponse(TranslateInGame newTranslateInGame, UUID gameId) {

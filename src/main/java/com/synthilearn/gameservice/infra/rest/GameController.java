@@ -21,6 +21,7 @@ import com.synthilearn.gameservice.infra.rest.dto.AllGamesResultDto;
 import com.synthilearn.gameservice.infra.rest.dto.AnswerResponseDto;
 import com.synthilearn.gameservice.infra.rest.dto.AnswerRequestDto;
 import com.synthilearn.gameservice.infra.rest.dto.CurrentGameResponseDto;
+import com.synthilearn.gameservice.infra.rest.dto.GameResponseDto;
 import com.synthilearn.gameservice.infra.rest.dto.GetAllGamesRequest;
 import com.synthilearn.gameservice.infra.rest.exception.GameException;
 
@@ -63,7 +64,7 @@ public class GameController {
     }
 
     @GetMapping("/{id}")
-    public Mono<GenericResponse<Game>> getOneGame(@PathVariable("id") UUID id) {
+    public Mono<GenericResponse<GameResponseDto>> getOneGame(@PathVariable("id") UUID id) {
         return gameService.getOne(id)
                 .switchIfEmpty(Mono.error(GameException.notFound(id)))
                 .map(GenericResponse::ok);

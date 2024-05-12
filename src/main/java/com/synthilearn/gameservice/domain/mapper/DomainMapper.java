@@ -8,19 +8,24 @@ import org.mapstruct.Mapping;
 
 import com.synthilearn.gameservice.domain.Game;
 import com.synthilearn.gameservice.domain.GameParameters;
+import com.synthilearn.gameservice.domain.GameStatistic;
 import com.synthilearn.gameservice.domain.PartOfSpeech;
 import com.synthilearn.gameservice.domain.PhraseType;
 import com.synthilearn.gameservice.domain.TranslateInGame;
 import com.synthilearn.gameservice.infra.persistence.jpa.entity.GameEntity;
 import com.synthilearn.gameservice.infra.persistence.jpa.entity.GameParametersEntity;
+import com.synthilearn.gameservice.infra.persistence.jpa.entity.GameStatisticEntity;
 import com.synthilearn.gameservice.infra.persistence.jpa.entity.TranslateInGameEntity;
+import com.synthilearn.gameservice.infra.rest.dto.GameResponseDto;
 
 @Mapper(componentModel = "spring")
 public interface DomainMapper {
 
     Game map(GameEntity entity);
+    GameResponseDto mapToDto(GameEntity entity);
+    GameStatistic map(GameStatisticEntity entity);
 
-    @Mapping(target = "availablePartOfSpeech", expression = "java(mapStringToPartsOfSpeechList(entity.getAvailablePartOfSpeech()))")
+    @Mapping(target = "partOfSpeech", expression = "java(mapStringToPartsOfSpeechList(entity.getPartOfSpeech()))")
     @Mapping(target = "phraseTypes", expression = "java(mapStringToTypeList(entity.getPhraseTypes()))")
     GameParameters map(GameParametersEntity entity);
 

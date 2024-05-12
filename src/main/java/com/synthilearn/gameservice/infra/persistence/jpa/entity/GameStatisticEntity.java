@@ -1,6 +1,7 @@
 package com.synthilearn.gameservice.infra.persistence.jpa.entity;
 
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import org.springframework.data.annotation.Id;
@@ -8,6 +9,8 @@ import org.springframework.data.annotation.Transient;
 import org.springframework.data.domain.Persistable;
 import org.springframework.data.relational.core.mapping.Column;
 import org.springframework.data.relational.core.mapping.Table;
+
+import com.synthilearn.gameservice.infra.rest.dto.PhraseInfo;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -31,6 +34,8 @@ public class GameStatisticEntity implements Persistable<UUID> {
     private Integer incorrectTranslates;
     @Column("translates_lack_time")
     private Integer translatesLackTime;
+    @Column("answer_info")
+    private String answerInfo;
 
     @Transient
     private boolean newRecord;

@@ -1,9 +1,10 @@
 package com.synthilearn.gameservice.infra.rest.scheduler;
 
 import java.time.ZonedDateTime;
-import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
 
@@ -13,6 +14,8 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.synthilearn.gameservice.domain.GameResult;
 import com.synthilearn.gameservice.domain.GameStatus;
 import com.synthilearn.gameservice.infra.persistence.jpa.entity.GameEntity;
@@ -21,6 +24,7 @@ import com.synthilearn.gameservice.infra.persistence.jpa.entity.TranslateInGameE
 import com.synthilearn.gameservice.infra.persistence.jpa.repository.GameJpaRepository;
 import com.synthilearn.gameservice.infra.persistence.jpa.repository.GameStatisticJpaRepository;
 import com.synthilearn.gameservice.infra.persistence.jpa.repository.TranslateInGameJpaRepository;
+import com.synthilearn.gameservice.infra.rest.dto.PhraseInfo;
 
 import lombok.RequiredArgsConstructor;
 import reactor.core.publisher.Mono;
@@ -73,17 +77,23 @@ public class MainScheduler {
                                     .filter(translate -> !translate.getCorrect())
                                     .count();
 
-                            generatePhrases(translations, game);
+                            Map<String, PhraseInfo> stringPhraseInfoMap =
+                                    generatePhrases(translations, game);
 
-                            gameStatisticJpaRepository.save(GameStatisticEntity.builder()
-                                    .id(game.getId())
-                                    .newRecord(true)
-                                    .correctTranslates(correctTranslates)
-                                    .incorrectTranslates(incorrectTranslates)
-                                    .translatesInGame(translatesInGame)
-                                    .translatesLackTime(translatesInGame - incorrectTranslates -
-                                            correctTranslates)
-                                    .build()).subscribe();
+                            try {
+                                gameStatisticJpaRepository.save(GameStatisticEntity.builder()
+                                        .id(game.getId())
+                                        .newRecord(true)
+                                        .answerInfo(new ObjectMapper().writeValueAsString(stringPhraseInfoMap.toString()))
+                                        .correctTranslates(correctTranslates)
+                                        .incorrectTranslates(incorrectTranslates)
+                                        .translatesInGame(translatesInGame)
+                                        .translatesLackTime(translatesInGame - incorrectTranslates -
+                                                correctTranslates)
+                                        .build()).subscribe();
+                            } catch (JsonProcessingException e) {
+
+                            }
                             return gameJpaRepository.save(game.toBuilder()
                                     .status(GameStatus.FINISHED)
                                     .statisticCreated(true)
@@ -92,8 +102,8 @@ public class MainScheduler {
                 .then();
     }
 
-    private void generatePhrases(List<TranslateInGameEntity> translations,
-                                 GameEntity game) {
+    private Map<String, PhraseInfo> generatePhrases(List<TranslateInGameEntity> translations,
+                                                    GameEntity game) {
         Map<Integer, List<TranslateInGameEntity>> map = translations.stream()
                 .collect(Collectors.groupingBy(TranslateInGameEntity::getQuestion, TreeMap::new,
                         Collectors.toList()));
@@ -103,9 +113,24 @@ public class MainScheduler {
                 .map(x -> x.replaceAll("[\"\\\\{}]", ""))
                 .toList();
 
-        for (Map.Entry<Integer, List<TranslateInGameEntity>> entry : map.entrySet()) {
+        Map<String, PhraseInfo> phrasesInfoMap = new HashMap<>();
 
+        for (Map.Entry<Integer, List<TranslateInGameEntity>> entry : map.entrySet()) {
+            Optional<TranslateInGameEntity> answeredTranslate =
+                    entry.getValue().stream().filter(x -> Boolean.TRUE.equals(x.getAnswer()))
+                            .findFirst();
+            TranslateInGameEntity trueAnswer =
+                    entry.getValue().stream().filter(TranslateInGameEntity::getCorrect).findFirst()
+                            .orElseThrow();
+            String phrase = phrases.get(entry.getKey() - 1);
+
+            answeredTranslate.ifPresent(translate -> phrasesInfoMap.put(phrase,
+                    new PhraseInfo(translate.getTranslateText(), translate.getCorrect(),
+                            trueAnswer.getId(), translate.getOldProgress(),
+                            translate.getNewProgress())));
         }
+
+        return phrasesInfoMap;
     }
 
     private Boolean gameIsFinished(GameEntity game, List<TranslateInGameEntity> translates) {

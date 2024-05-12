@@ -1,11 +1,14 @@
 package com.synthilearn.gameservice.app.service.impl;
 
+import java.awt.print.Pageable;
 import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,12 +23,15 @@ import com.synthilearn.gameservice.infra.adapter.dto.AllPhraseRequestDto;
 import com.synthilearn.gameservice.infra.persistence.jpa.entity.GameEntity;
 import com.synthilearn.gameservice.infra.persistence.jpa.entity.TranslateInGameEntity;
 import com.synthilearn.gameservice.infra.persistence.jpa.repository.GameJpaRepository;
+import com.synthilearn.gameservice.infra.persistence.jpa.repository.GameParametersJpaRepository;
 import com.synthilearn.gameservice.infra.persistence.jpa.repository.TranslateInGameJpaRepository;
+import com.synthilearn.gameservice.infra.rest.dto.AllGamesResultDto;
 import com.synthilearn.gameservice.infra.rest.dto.AnswerRequestDto;
 import com.synthilearn.gameservice.infra.rest.dto.AnswerResponseDto;
 import com.synthilearn.gameservice.infra.rest.dto.CurrentGameResponseDto;
 import com.synthilearn.gameservice.infra.rest.dto.CurrentStageInfo;
 import com.synthilearn.gameservice.infra.rest.dto.GameStateDto;
+import com.synthilearn.gameservice.infra.rest.dto.GetAllGamesRequest;
 import com.synthilearn.gameservice.infra.rest.exception.GameException;
 import com.synthilearn.gameservice.infra.rest.exception.StageException;
 
@@ -43,6 +49,7 @@ public class GameServiceImpl implements GameService {
     private final TranslateInGameJpaRepository translateInGameJpaRepository;
     private final GameParametersService gameParametersService;
     private final DomainMapper domainMapper;
+    private final GameParametersJpaRepository gameParametersJpaRepository;
 
     @Override
     @Transactional
@@ -159,6 +166,17 @@ public class GameServiceImpl implements GameService {
                             .map(domainMapper::map);
                 }).flatMap(newTranslateInGame -> formResponse(newTranslateInGame,
                         request.getGameId()));
+    }
+
+    @Override
+    public Mono<AllGamesResultDto> getAll(GetAllGamesRequest request) {
+        return gameJpaRepository.findAllByWorkareaId(request.getWorkareaId(),
+                        PageRequest.of(request.getPage(), request.getSize()))
+                .collectList()
+                .map(games -> games.stream().map(domainMapper::map).toList())
+                .zipWith(gameJpaRepository.countAllByWorkareaId(request.getWorkareaId()))
+                .map(el -> new AllGamesResultDto(el.getT1(),
+                        (int) Math.ceil((double) el.getT2() / request.getSize())));
     }
 
     private Mono<AnswerResponseDto> formResponse(TranslateInGame newTranslateInGame, UUID gameId) {

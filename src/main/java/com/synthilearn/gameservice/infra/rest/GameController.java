@@ -1,5 +1,6 @@
 package com.synthilearn.gameservice.infra.rest;
 
+import java.util.List;
 import java.util.UUID;
 
 import jakarta.validation.Valid;
@@ -15,9 +16,11 @@ import com.synthilearn.commonstarter.GenericResponse;
 import com.synthilearn.gameservice.app.service.GameService;
 import com.synthilearn.gameservice.domain.Game;
 import com.synthilearn.gameservice.infra.adapter.dto.AllPhraseRequestDto;
+import com.synthilearn.gameservice.infra.rest.dto.AllGamesResultDto;
 import com.synthilearn.gameservice.infra.rest.dto.AnswerResponseDto;
 import com.synthilearn.gameservice.infra.rest.dto.AnswerRequestDto;
 import com.synthilearn.gameservice.infra.rest.dto.CurrentGameResponseDto;
+import com.synthilearn.gameservice.infra.rest.dto.GetAllGamesRequest;
 
 import lombok.RequiredArgsConstructor;
 import reactor.core.publisher.Mono;
@@ -47,6 +50,13 @@ public class GameController {
     public Mono<GenericResponse<AnswerResponseDto>> answer(
             @Valid @RequestBody AnswerRequestDto request) {
         return gameService.answerQuestion(request)
+                .map(GenericResponse::ok);
+    }
+
+    @PostMapping("/all")
+    public Mono<GenericResponse<AllGamesResultDto>> getAll(
+            @Valid @RequestBody GetAllGamesRequest request) {
+        return gameService.getAll(request)
                 .map(GenericResponse::ok);
     }
 }

@@ -17,7 +17,7 @@ import lombok.NoArgsConstructor;
 @Data
 public class GameParameters {
     private Integer translatesAmount;
-    private List<PartOfSpeech> partOfSpeech;
+    private List<PartOfSpeech> partsOfSpeech;
     private List<PhraseType> phraseTypes;
     private LocalDate dateFrom;
     private LocalDate dateTo;

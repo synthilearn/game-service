@@ -1,7 +1,11 @@
 package com.synthilearn.gameservice.infra.rest.scheduler;
 
 import java.time.ZonedDateTime;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
+import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -56,10 +60,6 @@ public class MainScheduler {
                 .flatMap(game -> translateInGameJpaRepository.findAllByGameId(game.getId())
                         .collectList()
                         .flatMap(translations -> {
-                            List<TranslateInGameEntity> translateInGameEntities =
-                                    translations.stream()
-                                            .filter(TranslateInGameEntity::getCorrect)
-                                            .toList();
                             Integer translatesInGame =
                                     (int) translations.stream()
                                             .filter(TranslateInGameEntity::getCorrect)
@@ -72,10 +72,8 @@ public class MainScheduler {
                                     .filter(x -> Boolean.TRUE.equals(x.getAnswer()))
                                     .filter(translate -> !translate.getCorrect())
                                     .count();
-                            List<String> phrases = game.getPhrasesInGame()
-                                    .stream()
-                                    .map(x -> x.replaceAll("[\"\\\\{}]", ""))
-                                    .toList();
+
+                            generatePhrases(translations, game);
 
                             gameStatisticJpaRepository.save(GameStatisticEntity.builder()
                                     .id(game.getId())
@@ -92,6 +90,22 @@ public class MainScheduler {
                                     .build());
                         }))
                 .then();
+    }
+
+    private void generatePhrases(List<TranslateInGameEntity> translations,
+                                 GameEntity game) {
+        Map<Integer, List<TranslateInGameEntity>> map = translations.stream()
+                .collect(Collectors.groupingBy(TranslateInGameEntity::getQuestion, TreeMap::new,
+                        Collectors.toList()));
+
+        List<String> phrases = game.getPhrasesInGame()
+                .stream()
+                .map(x -> x.replaceAll("[\"\\\\{}]", ""))
+                .toList();
+
+        for (Map.Entry<Integer, List<TranslateInGameEntity>> entry : map.entrySet()) {
+
+        }
     }
 
     private Boolean gameIsFinished(GameEntity game, List<TranslateInGameEntity> translates) {

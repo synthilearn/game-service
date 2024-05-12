@@ -55,7 +55,7 @@ public class GameParametersServiceImpl implements GameParametersService {
         return GameParametersEntity.builder()
                 .newRecord(true)
                 .phraseTypes(requestDto.getPhraseTypes().toString())
-                .partOfSpeech(requestDto.getPartsOfSpeech().toString())
+                .partsOfSpeech(requestDto.getPartsOfSpeech().toString())
                 .dateFrom(requestDto.getDateFrom())
                 .dateTo(requestDto.getDateTo())
                 .typeOfGame(requestDto.getTypeOfGame())

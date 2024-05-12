@@ -25,7 +25,7 @@ public interface DomainMapper {
     GameResponseDto mapToDto(GameEntity entity);
     GameStatistic map(GameStatisticEntity entity);
 
-    @Mapping(target = "partOfSpeech", expression = "java(mapStringToPartsOfSpeechList(entity.getPartOfSpeech()))")
+    @Mapping(target = "partsOfSpeech", expression = "java(mapStringToPartsOfSpeechList(entity.getPartsOfSpeech()))")
     @Mapping(target = "phraseTypes", expression = "java(mapStringToTypeList(entity.getPhraseTypes()))")
     GameParameters map(GameParametersEntity entity);
 

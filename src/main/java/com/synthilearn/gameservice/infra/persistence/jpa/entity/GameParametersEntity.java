@@ -1,8 +1,6 @@
 package com.synthilearn.gameservice.infra.persistence.jpa.entity;
 
 import java.time.LocalDate;
-import java.util.List;
-import java.util.Set;
 import java.util.UUID;
 
 import org.springframework.data.annotation.Id;
@@ -11,8 +9,6 @@ import org.springframework.data.domain.Persistable;
 import org.springframework.data.relational.core.mapping.Column;
 import org.springframework.data.relational.core.mapping.Table;
 
-import com.synthilearn.gameservice.domain.PartOfSpeech;
-import com.synthilearn.gameservice.domain.PhraseType;
 import com.synthilearn.gameservice.domain.TypeOfGame;
 
 import lombok.AllArgsConstructor;
@@ -31,7 +27,7 @@ public class GameParametersEntity implements Persistable<UUID> {
     @Column("translates_amount")
     private Integer translatesAmount;
     @Column("available_part_of_speech")
-    private String partOfSpeech;
+    private String partsOfSpeech;
     @Column("phrase_types")
     private String phraseTypes;
     @Column("date_from")

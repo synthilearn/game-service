@@ -48,7 +48,7 @@ public class GameParametersServiceImpl implements GameParametersService {
                 .flatMap(gameOpt -> gameOpt.map(
                                 game -> gameParametersJpaRepository.findById(game.getId())
                                         .map(domainMapper::map))
-                        .orElseGet(() -> Mono.error(GameParametersException.notFound(workareaId))));
+                        .orElseGet(Mono::empty));
     }
 
     private GameParametersEntity init(AllPhraseRequestDto requestDto, UUID gameId) {

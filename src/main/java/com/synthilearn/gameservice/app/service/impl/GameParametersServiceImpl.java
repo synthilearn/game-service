@@ -44,11 +44,9 @@ public class GameParametersServiceImpl implements GameParametersService {
     @Override
     public Mono<GameParameters> getGameParameters(UUID workareaId) {
         return gameJpaRepository.findTopByOrderByCreationDateDesc(workareaId)
-                .singleOptional()
-                .flatMap(gameOpt -> gameOpt.map(
-                                game -> gameParametersJpaRepository.findById(game.getId())
-                                        .map(domainMapper::map))
-                        .orElseGet(Mono::empty));
+                .switchIfEmpty(Mono.just(null))
+                .flatMap(game -> gameParametersJpaRepository.findById(game.getId())
+                                        .map(domainMapper::map));
     }
 
     private GameParametersEntity init(AllPhraseRequestDto requestDto, UUID gameId) {

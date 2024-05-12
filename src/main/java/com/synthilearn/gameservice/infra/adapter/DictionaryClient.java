@@ -60,13 +60,13 @@ public class DictionaryClient {
                 });
     }
 
-    public Mono<Void> changeProgress(ChangeProgressRequest request) {
+    public Mono<String> changeProgress(ChangeProgressRequest request) {
         return webClient.post()
                 .uri(webClientProperties.getDictionaryHost() + "/phrase/change-progress")
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(Mono.just(request), ChangeProgressRequest.class)
                 .retrieve()
-                .bodyToMono(Void.class)
+                .bodyToMono(String.class)
                 .onErrorResume(error -> {
                     log.error("Error has occurred while save data for customer: {}, exception: {}",
                             request, error);

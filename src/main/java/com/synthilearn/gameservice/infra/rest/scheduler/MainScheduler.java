@@ -90,18 +90,6 @@ public class MainScheduler {
                                     .add(new ProgressEntry(value.getCorrectAnswerId(),
                                             value.getNewProgress())));
 
-                            if (!request.getProgressEntries().isEmpty()) {
-                                dictionaryClient.changeProgress(request)
-                                        .subscribe(
-                                                success -> {
-                                                    log.info("Изменен прогресс слов {} {}", request, success);
-                                                },
-                                                error -> {
-                                                    log.info("Ошибка при изменении прогресса слов {} {}", error, request);
-                                                }
-                                        );
-                            }
-
                             try {
                                 gameStatisticJpaRepository.save(GameStatisticEntity.builder()
                                         .id(game.getId())
@@ -117,10 +105,15 @@ public class MainScheduler {
                             } catch (JsonProcessingException e) {
                                 return Mono.error(new RuntimeException(e));
                             }
-                            return gameJpaRepository.save(game.toBuilder()
+                            gameJpaRepository.save(game.toBuilder()
                                     .status(GameStatus.FINISHED)
                                     .statisticCreated(true)
-                                    .build());
+                                    .build()).subscribe();
+
+                            if (!request.getProgressEntries().isEmpty()) {
+                                return dictionaryClient.changeProgress(request);
+                            }
+                            return Mono.empty();
                         }))
                 .then();
     }
@@ -149,7 +142,7 @@ public class MainScheduler {
 
             answeredTranslate.ifPresent(translate -> phrasesInfoMap.put(phrase,
                     new PhraseInfo(translate.getTranslateText(), translate.getCorrect(),
-                            trueAnswer.getId(), translate.getOldProgress(),
+                            trueAnswer.getTranslateId(), translate.getOldProgress(),
                             calculateProgress(translate, trueAnswer))));
         }
 

@@ -92,7 +92,14 @@ public class MainScheduler {
 
                             if (!request.getProgressEntries().isEmpty()) {
                                 dictionaryClient.changeProgress(request)
-                                        .subscribe();
+                                        .subscribe(
+                                                success -> {
+                                                    log.info("Изменен прогресс слов {} {}", request, success);
+                                                },
+                                                error -> {
+                                                    log.info("Ошибка при изменении прогресса слов {} {}", error, request);
+                                                }
+                                        );
                             }
 
                             try {

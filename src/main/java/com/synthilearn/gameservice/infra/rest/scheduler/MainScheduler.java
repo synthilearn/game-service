@@ -142,7 +142,8 @@ public class MainScheduler {
 
             answeredTranslate.ifPresent(translate -> phrasesInfoMap.put(phrase,
                     new PhraseInfo(translate.getTranslateText(), translate.getCorrect(),
-                            trueAnswer.getTranslateId(), translate.getOldProgress(),
+                            trueAnswer.getTranslateId(), trueAnswer.getTranslateText(),
+                            translate.getOldProgress(),
                             calculateProgress(translate, trueAnswer))));
         }
 

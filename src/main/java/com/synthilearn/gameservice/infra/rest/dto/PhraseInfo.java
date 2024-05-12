@@ -13,6 +13,7 @@ public class PhraseInfo {
     private String answer;
     private Boolean correct;
     private UUID correctAnswerId;
+    private String correctAnswerText;
     private Integer oldProgress;
     private Integer newProgress;
 }

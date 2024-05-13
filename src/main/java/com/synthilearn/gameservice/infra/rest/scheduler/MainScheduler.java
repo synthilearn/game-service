@@ -181,10 +181,10 @@ public class MainScheduler {
                 .filter(x -> Boolean.TRUE.equals(x.getAnswer()))
                 .filter(TranslateInGameEntity::getCorrect)
                 .count());
-        return ((double) game.getPhrasesInGame().size() -
-                translates.stream()
-                        .filter(x -> Boolean.TRUE.equals(x.getAnswer()))
-                        .filter(TranslateInGameEntity::getCorrect)
-                        .count()) >= 0.8 ? GameResult.SUCCESS : GameResult.FAILED;
+        return ((double) translates.stream()
+                .filter(x -> Boolean.TRUE.equals(x.getAnswer()))
+                .filter(TranslateInGameEntity::getCorrect)
+                .count() / game.getPhrasesInGame().size()) >= 0.8 ? GameResult.SUCCESS :
+                GameResult.FAILED;
     }
 }

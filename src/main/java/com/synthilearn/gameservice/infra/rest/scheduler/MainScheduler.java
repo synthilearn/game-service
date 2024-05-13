@@ -177,10 +177,14 @@ public class MainScheduler {
     }
 
     private GameResult getGameResult(GameEntity game, List<TranslateInGameEntity> translates) {
+        log.info("***** {}", translates.stream()
+                .filter(x -> Boolean.TRUE.equals(x.getAnswer()))
+                .filter(TranslateInGameEntity::getCorrect)
+                .count());
         return ((double) game.getPhrasesInGame().size() -
                 translates.stream()
                         .filter(x -> Boolean.TRUE.equals(x.getAnswer()))
                         .filter(TranslateInGameEntity::getCorrect)
-                        .count()) > 0.9 ? GameResult.SUCCESS : GameResult.FAILED;
+                        .count()) >= 0.8 ? GameResult.SUCCESS : GameResult.FAILED;
     }
 }

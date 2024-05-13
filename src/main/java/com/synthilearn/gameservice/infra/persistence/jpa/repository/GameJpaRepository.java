@@ -35,7 +35,7 @@ public interface GameJpaRepository extends ReactiveCrudRepository<GameEntity, UU
             """)
     Flux<GameEntity> getWaitingStatisticGenerateGames();
 
-    Flux<GameEntity> findAllByWorkareaId(
+    Flux<GameEntity> findAllByWorkareaIdOrderByCreationDateDesc(
             UUID workareaId,
             Pageable pageable
     );

@@ -167,7 +167,7 @@ public class GameServiceImpl implements GameService {
 
     @Override
     public Mono<AllGamesResultDto> getAll(GetAllGamesRequest request) {
-        return gameJpaRepository.findAllByWorkareaId(request.getWorkareaId(),
+        return gameJpaRepository.findAllByWorkareaIdOrderByCreationDateDesc(request.getWorkareaId(),
                         PageRequest.of(request.getPage(), request.getSize()))
                 .collectList()
                 .map(games -> games.stream().map(domainMapper::map).toList())
